@@ -1,40 +1,45 @@
-const express = require('express')
-const path = require('path')
-const morgan = require('morgan')
-const handlebars = require('express-handlebars')
-const app = express()
-const port = 3000
+const express = require('express');
+const path = require('path');
+const morgan = require('morgan');
+const handlebars = require('express-handlebars');
+const app = express();
+const port = 3000;
+const db = require('./config/db');
+
+// connect to db
+db.connect();
+
+const route = require('./routes');
 
 // http logger
-app.use(morgan('combined'))
-app.use(express.urlencoded({
-  extended:true
-}
-))
-app.use(express.json())
+app.use(morgan('combined'));
+app.use(
+    express.urlencoded({
+        extended: true,
+    }),
+);
+app.use(express.json());
 
 //template engine
-app.engine('handlebars', handlebars())
-app.set('view engine', 'handlebars')
-app.set('views', path.join(__dirname, 'resours\\views'))
+app.engine('handlebars', handlebars());
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'resours', 'views'));
 
-app.get('/', (req, res) => {
-  res.render('home');
-})
-
-app.get('/news', (req, res) => {
-  res.render('news');
-})
-
-app.get('/search', (req, res) => {
-  res.render('search');
-})
-
-app.post('/search', (req, res) => {
-  console.log(req.body);
-  res.send('');
-})
+// routes init
+route(app);
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+    console.log(`App listening at http://localhost:${port}`);
+});
+// package.json
+//để đây nhớ
+//"lint-staged": {
+//  "src/**/*.{js,json,scss": "prettier --single-quote --trailing-comma all --tab-width 4 --write"
+//},
+/*
+  "husky: {
+    "hooks":{
+      "pre-commit": "lint-staged"
+    }
+  }"
+  */
